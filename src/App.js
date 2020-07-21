@@ -1,6 +1,5 @@
 import React from 'react';
 import Particles from 'react-particles-js'
-import Clarifai from 'clarifai';
 import Navigation from './components/Navigation/Navigation';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Logo from './components/Logo/Logo';
@@ -9,10 +8,6 @@ import Register from './components/Register/Register';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import './App.css';
-
-const app = new Clarifai.App({
- apiKey: '2cd3b80efe9d4819a4c3470ed51dc7ab'
-});
 
 const particlesOptions={
    	particles: {
@@ -79,15 +74,18 @@ class App extends React.Component {
 	}
 
 	onButtonSubmit=()=>{
-		this.setState({imageUrl:this.state.input})
-		console.log(app.models)
-		app.models
-			.predict(
-			Clarifai.FACE_DETECT_MODEL,
-			this.state.input)
+		this.setState({imageUrl:this.state.input});
+			fetch('https://limitless-scrubland-01331.herokuapp.com/imageurl',{
+				method: 'post',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					input: this.state.input
+				})
+			})
+			.then(response => response.json())
 			.then(response => {
 				if (response){
-					fetch('http://localhost:3000/image',{
+					fetch('https://limitless-scrubland-01331.herokuapp.com:3000/image',{
 						method: 'put',
 						headers: {'Content-Type': 'application/json'},
 						body: JSON.stringify({
